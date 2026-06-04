@@ -1,11 +1,8 @@
 .panel {
   border: 1px solid rgba(212, 175, 55, 0.18);
-  /* Fondo sólido (sin backdrop-filter) para no trabar el scroll en móvil. */
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
-    rgba(18, 18, 18, 0.97);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-  padding: 24px;
+  background: #121212;
+  box-shadow: none;
+  padding: 20px;
 }
 
 .head {
@@ -31,15 +28,11 @@
   background: rgba(255, 255, 255, 0.04);
   color: #f5ead0;
   cursor: pointer;
-  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+  transition: border-color 140ms ease-out;
 }
 
 .iconButton:hover {
   border-color: rgba(212, 175, 55, 0.65);
-}
-
-.iconButton:active {
-  transform: scale(0.97);
 }
 
 .weekdays,
@@ -66,16 +59,11 @@
   background: rgba(255, 255, 255, 0.025);
   color: #f7f3ea;
   cursor: pointer;
-  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+  transition: border-color 140ms ease-out;
 }
 
 .day:hover:not(:disabled) {
   border-color: rgba(212, 175, 55, 0.62);
-  transform: translateY(-1px);
-}
-
-.day:active:not(:disabled) {
-  transform: scale(0.97);
 }
 
 .day:disabled {

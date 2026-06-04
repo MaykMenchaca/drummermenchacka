@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
 import Calendar, {
   DEFAULT_SLOTS,
   fromDateKey,
@@ -32,7 +31,6 @@ function normalizeAvailability(days = []) {
 }
 
 export default function AdminPage() {
-  const reduceMotion = useReducedMotion();
   const [authChecked, setAuthChecked] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -74,14 +72,6 @@ export default function AdminPage() {
       { label: "Solicitudes", value: appointments.length },
     ];
   }, [appointments, availability]);
-
-  const reveal = reduceMotion
-    ? {}
-    : {
-        initial: { opacity: 0, y: 14 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.26, ease: "easeOut" },
-      };
 
   useEffect(() => {
     fetch("/api/auth")
@@ -351,7 +341,7 @@ export default function AdminPage() {
       <Header active="admin" />
       <main className={styles.shell}>
         <div className={styles.container}>
-          <motion.div className={styles.heading} {...reveal}>
+          <div className={styles.heading}>
             <div>
               <p className="label-caps text-gold">Operacion</p>
               <h1 className="title-large">Agenda del estudio</h1>
@@ -360,29 +350,22 @@ export default function AdminPage() {
               <Icon name="logOut" size={18} />
               Salir
             </button>
-          </motion.div>
+          </div>
 
           <div className={styles.statsGrid}>
-            {stats.map((stat, index) => (
-              <motion.article
+            {stats.map((stat) => (
+              <article
                 key={stat.label}
                 className={styles.statCard}
-                {...(reduceMotion
-                  ? {}
-                  : {
-                      initial: { opacity: 0, y: 12 },
-                      animate: { opacity: 1, y: 0 },
-                      transition: { duration: 0.22, delay: index * 0.04, ease: "easeOut" },
-                    })}
               >
                 <span className="label-caps text-gold">{stat.label}</span>
                 <strong>{stat.value}</strong>
-              </motion.article>
+              </article>
             ))}
           </div>
 
           <div className={styles.adminGrid}>
-            <motion.section className={styles.panel} {...reveal}>
+            <section className={styles.panel}>
               <div className={styles.panelHead}>
                 <div>
                   <p className="label-caps text-gold">Disponibilidad</p>
@@ -397,9 +380,9 @@ export default function AdminPage() {
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
               />
-            </motion.section>
+            </section>
 
-            <motion.section className={styles.panel} {...reveal}>
+            <section className={styles.panel}>
               <div className={styles.panelHead}>
                 <div>
                   <p className="label-caps text-gold">Horarios</p>
@@ -454,104 +437,75 @@ export default function AdminPage() {
                 Guardar dia
               </button>
               {status ? <p className={styles.statusLine}>{status}</p> : null}
-            </motion.section>
+            </section>
           </div>
 
-          <motion.section className={`${styles.panel} ${styles.appointmentsPanel}`} {...reveal}>
+          <section className={`${styles.panel} ${styles.appointmentsPanel}`}>
             <div className={styles.panelHead}>
               <div>
                 <p className="label-caps text-gold">Solicitudes</p>
                 <h2>Citas recientes</h2>
               </div>
             </div>
-            <div className={styles.tableWrap}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Cliente</th>
-                    <th>Fecha / Hora</th>
-                    <th>Concepto</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.length ? (
-                    appointments.map((appointment) => (
-                      <tr key={appointment.id}>
-                        <td>
-                          <strong>{appointment.name}</strong>
-                          <br />
-                          <span className={styles.subtle}>{appointment.email}</span>
-                          {appointment.phone ? (
-                            <>
-                              <br />
-                              <span className={styles.subtle}>{appointment.phone}</span>
-                            </>
-                          ) : null}
-                        </td>
-                        <td>
-                          {appointment.date}
-                          <br />
-                          <span className="text-gold">{appointment.time}</span>
-                        </td>
-                        <td className={styles.conceptCell}>{appointment.concept}</td>
-                        <td>
-                          <select
-                            className={styles.statusSelect}
-                            value={appointment.status}
-                            onChange={(event) =>
-                              handleStatusChange(appointment.id, event.target.value)
-                            }
-                            aria-label="Cambiar estado de la cita"
-                          >
-                            {STATUS_OPTIONS.map((option) => (
-                              <option key={option} value={option}>
-                                {STATUS_LABEL[option]}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td>
-                          <div className={styles.rowActions}>
-                            {appointment.phone ? (
-                              <a
-                                className={styles.iconAction}
-                                href={whatsappLink(appointment)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`Escribir a ${appointment.name} por WhatsApp`}
-                                title="Confirmar por WhatsApp"
-                              >
-                                <Icon name="whatsapp" size={18} />
-                              </a>
-                            ) : null}
-                            <button
-                              type="button"
-                              className={styles.iconAction}
-                              onClick={() => handleDeleteAppointment(appointment.id)}
-                              aria-label={`Borrar cita de ${appointment.name}`}
-                              title="Borrar cita"
-                            >
-                              <Icon name="trash" size={18} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className={styles.emptyCell}>
-                        Aun no hay solicitudes guardadas.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className={styles.appointmentList}>
+              {appointments.length ? (
+                appointments.map((appointment) => (
+                  <article key={appointment.id} className={styles.appointmentCard}>
+                    <div className={styles.appointmentMain}>
+                      <div>
+                        <p className="label-caps text-gold">{appointment.date} / {appointment.time}</p>
+                        <h3>{appointment.name}</h3>
+                        <p className={styles.subtle}>{appointment.email}</p>
+                        {appointment.phone ? <p className={styles.subtle}>{appointment.phone}</p> : null}
+                      </div>
+                      <select
+                        className={styles.statusSelect}
+                        value={appointment.status}
+                        onChange={(event) =>
+                          handleStatusChange(appointment.id, event.target.value)
+                        }
+                        aria-label="Cambiar estado de la cita"
+                      >
+                        {STATUS_OPTIONS.map((option) => (
+                          <option key={option} value={option}>
+                            {STATUS_LABEL[option]}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <p className={styles.conceptCell}>{appointment.concept}</p>
+                    <div className={styles.rowActions}>
+                      {appointment.phone ? (
+                        <a
+                          className={styles.iconAction}
+                          href={whatsappLink(appointment)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Escribir a ${appointment.name} por WhatsApp`}
+                          title="Confirmar por WhatsApp"
+                        >
+                          <Icon name="whatsapp" size={18} />
+                        </a>
+                      ) : null}
+                      <button
+                        type="button"
+                        className={styles.iconAction}
+                        onClick={() => handleDeleteAppointment(appointment.id)}
+                        aria-label={`Borrar cita de ${appointment.name}`}
+                        title="Borrar cita"
+                      >
+                        <Icon name="trash" size={18} />
+                      </button>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <p className={styles.emptyCell}>Aun no hay solicitudes guardadas.</p>
+              )}
             </div>
-          </motion.section>
+          </section>
 
-          <motion.section className={`${styles.panel} ${styles.appointmentsPanel}`} {...reveal}>
+          <section className={`${styles.panel} ${styles.appointmentsPanel}`}>
             <div className={styles.panelHead}>
               <div>
                 <p className="label-caps text-gold">Galería</p>
@@ -643,7 +597,7 @@ export default function AdminPage() {
                 </figure>
               ))}
             </div>
-          </motion.section>
+          </section>
         </div>
       </main>
       <Footer />

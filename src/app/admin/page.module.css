@@ -1,9 +1,7 @@
 .shell {
   min-height: 100vh;
   padding: 84px 0 72px;
-  background:
-    radial-gradient(circle at 12% 4%, rgba(212, 175, 55, 0.1), transparent 32%),
-    linear-gradient(180deg, #080808 0%, #101010 58%, #070707 100%);
+  background: #0b0b0b;
 }
 
 .container {
@@ -21,11 +19,8 @@
 .panel,
 .statCard {
   border: 1px solid rgba(212, 175, 55, 0.18);
-  /* Fondo sólido (sin backdrop-filter) para no trabar el scroll en móvil. */
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
-    rgba(18, 18, 18, 0.97);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+  background: #141414;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
 }
 
 .authPanel {
@@ -95,12 +90,12 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 28px;
+  gap: 14px;
+  margin-bottom: 22px;
 }
 
 .statCard {
-  padding: 22px;
+  padding: 18px;
 }
 
 .statCard strong {
@@ -115,12 +110,12 @@
 .adminGrid {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.75fr);
-  gap: 28px;
+  gap: 20px;
   align-items: start;
 }
 
 .panel {
-  padding: 26px;
+  padding: 22px;
 }
 
 .panelHead {
@@ -149,15 +144,11 @@
   color: #f7f3ea;
   cursor: pointer;
   font-weight: 700;
-  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+  transition: border-color 140ms ease-out;
 }
 
 .slotButton:hover:not(:disabled) {
   border-color: rgba(212, 175, 55, 0.62);
-}
-
-.slotButton:active:not(:disabled) {
-  transform: scale(0.97);
 }
 
 .slotButton:disabled {
@@ -187,38 +178,30 @@
   margin-top: 28px;
 }
 
-.tableWrap {
-  width: 100%;
-  overflow-x: auto;
+.appointmentList {
+  display: grid;
+  gap: 12px;
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 860px;
+.appointmentCard {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #101010;
 }
 
-.table th,
-.table td {
-  padding: 15px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-  text-align: left;
-  vertical-align: top;
+.appointmentMain {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 190px);
+  gap: 16px;
+  align-items: start;
 }
 
-.table th {
-  color: #d4af37;
-  font-size: 0.74rem;
-  text-transform: uppercase;
-}
-
-.table td {
-  color: #f7f3ea;
-}
-
-.table td:nth-child(5) {
-  color: #d0c5af;
-  max-width: 420px;
+.appointmentMain h3 {
+  margin: 6px 0;
+  color: #fffaf0;
+  font-size: 1.1rem;
 }
 
 .statusPill {
@@ -250,8 +233,9 @@
 }
 
 .emptyCell {
-  height: 120px;
-  text-align: center;
+  min-height: 96px;
+  display: grid;
+  place-items: center;
   color: #d0c5af;
 }
 
@@ -262,7 +246,7 @@
 
 .conceptCell {
   color: #d0c5af;
-  max-width: 320px;
+  overflow-wrap: anywhere;
 }
 
 .refThumbs {
@@ -315,6 +299,7 @@
 .rowActions {
   display: flex;
   gap: 8px;
+  justify-content: flex-end;
 }
 
 .iconAction {
@@ -491,6 +476,18 @@
 
   .inlineForm {
     grid-template-columns: 1fr;
+  }
+
+  .appointmentMain {
+    grid-template-columns: 1fr;
+  }
+
+  .statusSelect {
+    width: 100%;
+  }
+
+  .rowActions {
+    justify-content: flex-start;
   }
 
   .galleryFields {

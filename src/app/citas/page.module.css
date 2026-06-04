@@ -1,9 +1,7 @@
 .shell {
   min-height: 100vh;
   padding: 88px 0 72px;
-  background:
-    radial-gradient(circle at 18% 6%, rgba(212, 175, 55, 0.12), transparent 34%),
-    linear-gradient(180deg, #090909 0%, #101010 58%, #080808 100%);
+  background: #0b0b0b;
 }
 
 .container {
@@ -33,25 +31,35 @@
 
 .bookingGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr) minmax(280px, 360px);
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.8fr) minmax(280px, 340px);
   align-items: start;
-  gap: 28px;
+  gap: 20px;
 }
 
 .panel,
 .summaryCard,
 .successPanel {
   border: 1px solid rgba(212, 175, 55, 0.18);
-  /* Fondo sólido (sin backdrop-filter): el blur de fondo re-rasteriza cada frame
-     al hacer scroll y trababa el móvil. Se ve casi igual y va fluido. */
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
-    rgba(18, 18, 18, 0.97);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  background: #141414;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
 }
 
 .panel {
-  padding: 26px;
+  padding: 22px;
+}
+
+.panelTitle {
+  display: flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.panelTitle span {
+  color: #d0c5af;
+  font-size: 0.82rem;
 }
 
 .slotSection {
@@ -86,15 +94,11 @@
   cursor: pointer;
   font-weight: 700;
   letter-spacing: 0;
-  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+  transition: border-color 140ms ease-out;
 }
 
 .slotButton:hover:not(:disabled) {
   border-color: rgba(212, 175, 55, 0.62);
-}
-
-.slotButton:active:not(:disabled) {
-  transform: scale(0.97);
 }
 
 .slotButton:disabled {
@@ -169,8 +173,8 @@
 
 .summaryCard {
   position: sticky;
-  top: 112px;
-  padding: 28px;
+  top: 96px;
+  padding: 24px;
 }
 
 .summaryCard h2 {
@@ -306,7 +310,7 @@
 
 @media (max-width: 1100px) {
   .shell {
-    padding-bottom: 152px;
+    padding-bottom: 174px;
   }
 
   .bookingGrid {
@@ -329,10 +333,8 @@
     align-items: center;
     padding: 16px;
     border: 1px solid rgba(212, 175, 55, 0.3);
-    background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
-      rgba(10, 10, 10, 0.98);
-    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
+    background: #111;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
   }
 
   .mobileSummaryDetails {
@@ -380,7 +382,7 @@
 
 @media (max-width: 720px) {
   .shell {
-    padding: 56px 0;
+    padding: 56px 0 190px;
   }
 
   .container {
