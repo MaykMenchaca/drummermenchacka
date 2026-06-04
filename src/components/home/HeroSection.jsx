@@ -69,7 +69,7 @@ export default function HeroSection() {
         aria-hidden="true"
       >
         <Image
-          src="/tattoos/999_mejorada.jpeg"
+          src="/tattoos/principal.png"
           alt=""
           className={styles.mediaImg}
           fill
