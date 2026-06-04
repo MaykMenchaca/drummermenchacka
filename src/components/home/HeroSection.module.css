@@ -29,8 +29,8 @@
 
 .mediaImg {
   object-fit: cover;
-  object-position: center 68%;
-  filter: grayscale(100%) brightness(0.32) contrast(1.05);
+  object-position: center 96%;
+  filter: grayscale(100%) brightness(0.42) contrast(1.12);
 }
 
 /* ---------- Viñeta / gradiente radial para legibilidad ---------- */
@@ -42,8 +42,8 @@
   background:
     radial-gradient(
       ellipse 90% 80% at center 42%,
-      rgba(13, 13, 13, 0.35) 0%,
-      rgba(13, 13, 13, 0.72) 58%,
+      rgba(13, 13, 13, 0.28) 0%,
+      rgba(13, 13, 13, 0.62) 58%,
       var(--color-bg) 100%
     ),
     linear-gradient(
@@ -168,7 +168,7 @@
   }
 
   .mediaImg {
-    object-position: center 72%;
+    object-position: center 90%;
   }
 
   .subtitle {
