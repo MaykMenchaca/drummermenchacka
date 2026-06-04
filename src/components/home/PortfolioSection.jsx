@@ -7,7 +7,6 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Reveal, { RevealItem } from "@/components/Reveal";
 import { TATTOO_DATA, CATEGORIES } from "@/components/home/data";
 import Lightbox from "./Lightbox";
 import styles from "./PortfolioSection.module.css";
@@ -80,9 +79,9 @@ export default function PortfolioSection({ tattoos }) {
         {filtered.length === 0 ? (
           <p className={styles.empty}>No hay piezas en esta categoría todavía.</p>
         ) : (
-          <Reveal stagger className={styles.grid} key={activeCat}>
+          <div className={styles.grid} key={activeCat}>
             {filtered.map((piece, i) => (
-              <RevealItem
+              <div
                 key={piece.id}
                 className={`${styles.cell} ${piece.featured ? styles.cellFeatured : ""}`}
               >
@@ -116,9 +115,9 @@ export default function PortfolioSection({ tattoos }) {
                     </span>
                   </span>
                 </button>
-              </RevealItem>
+              </div>
             ))}
-          </Reveal>
+          </div>
         )}
 
         <div className={styles.cta}>

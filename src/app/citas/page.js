@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { upload } from "@vercel/blob/client";
 import Calendar, { fromDateKey, monthLabel, toMonthKey } from "@/components/Calendar";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -17,33 +16,6 @@ function normalizeAvailability(days = []) {
   }, {});
 }
 
-// Reduce una imagen a máx `maxDim` px (lado mayor) y la re-comprime a JPEG,
-// para que las referencias ocupen poco en el almacenamiento. Devuelve un File.
-async function compressImage(file, maxDim = 1280, quality = 0.8) {
-  if (!file.type?.startsWith("image/")) return file;
-  try {
-    const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
-    const w = Math.round(bitmap.width * scale);
-    const h = Math.round(bitmap.height * scale);
-    const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    canvas.getContext("2d").drawImage(bitmap, 0, 0, w, h);
-    const blob = await new Promise((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg", quality)
-    );
-    if (!blob) return file;
-    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", {
-      type: "image/jpeg",
-    });
-  } catch {
-    return file; // si algo falla, sube el original
-  }
-}
-
-const MAX_REFERENCES = 5;
-
 export default function Citas() {
   const reduceMotion = useReducedMotion();
   const [monthDate, setMonthDate] = useState(() => new Date());
@@ -51,9 +23,7 @@ export default function Citas() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", concept: "" });
-  const [references, setReferences] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadingRefs, setUploadingRefs] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [successToken, setSuccessToken] = useState("");
   const [linkCopied, setLinkCopied] = useState(false);
@@ -99,13 +69,6 @@ export default function Citas() {
     setFormData((current) => ({ ...current, [name]: value }));
   }
 
-  function handleFileChange(event) {
-    if (event.target.files) {
-      // Máximo MAX_REFERENCES imágenes.
-      setReferences([...event.target.files].slice(0, MAX_REFERENCES));
-    }
-  }
-
   function handleSelectDate(dateKey) {
     const firstAvailableSlot = availability[dateKey]?.slots?.find((slot) => !slot.booked);
     setSelectedDate(dateKey);
@@ -127,24 +90,6 @@ export default function Citas() {
     setErrorMsg("");
 
     try {
-      // 1) Subir las imágenes de referencia a Vercel Blob (directo desde el navegador).
-      let uploadedRefs = [];
-      if (references.length) {
-        setUploadingRefs(true);
-        uploadedRefs = await Promise.all(
-          references.map(async (file) => {
-            const compressed = await compressImage(file);
-            const result = await upload(`references/${compressed.name}`, compressed, {
-              access: "public",
-              handleUploadUrl: "/api/upload",
-            });
-            return { url: result.url, pathname: result.pathname };
-          })
-        );
-        setUploadingRefs(false);
-      }
-
-      // 2) Crear la cita con las URLs de las referencias.
       const response = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -152,7 +97,6 @@ export default function Citas() {
           ...formData,
           date: selectedDate,
           time: selectedTime,
-          references: uploadedRefs,
         }),
       });
       const data = await response.json();
@@ -166,7 +110,6 @@ export default function Citas() {
     } catch (error) {
       setErrorMsg(error.message || "No se pudo completar la solicitud.");
     } finally {
-      setUploadingRefs(false);
       setIsSubmitting(false);
     }
   }
@@ -182,11 +125,7 @@ export default function Citas() {
   const submitHelp = canSubmit
     ? "Deposito requerido tras confirmacion."
     : "Elige un dia y horario disponible.";
-  const submitLabel = uploadingRefs
-    ? "Subiendo imágenes…"
-    : isSubmitting
-    ? "Procesando…"
-    : "Confirmar cita";
+  const submitLabel = isSubmitting ? "Procesando…" : "Confirmar cita";
 
   const reveal = reduceMotion
     ? {}
@@ -209,7 +148,8 @@ export default function Citas() {
               <h1>Solicitud enviada</h1>
               <p>
                 Tu solicitud para el {selectedDateLabel} a las {selectedTime} fue
-                registrada. <strong>Drummer Menchacka te confirmará por WhatsApp.</strong>
+                registrada. <strong>Drummer Menchacka te confirmará por WhatsApp.</strong>{" "}
+                Mándale tu boceto o referencias por ese mismo chat.
               </p>
 
               {successToken ? (
@@ -383,30 +323,9 @@ export default function Citas() {
                     />
                   </div>
 
-                  <div className={styles.formGroup}>
-                    <label className="form-label label-caps" htmlFor="references">
-                      Referencias visuales
-                    </label>
-                    <label className={styles.uploader} htmlFor="references">
-                      <Icon name="upload" size={28} />
-                      <span className="label-caps">
-                        {references.length
-                          ? `${references.length} archivo(s) seleccionado(s)`
-                          : "Haz clic para elegir archivos"}
-                      </span>
-                      <input
-                        id="references"
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileChange}
-                      />
-                    </label>
-                    <p className={styles.helper}>
-                      Hasta {MAX_REFERENCES} imágenes. Se envían junto con tu solicitud para que
-                      Drummer las revise.
-                    </p>
-                  </div>
+                  <p className={styles.helper}>
+                    ¿Tienes un boceto o referencias? Envíalas por WhatsApp al confirmar tu cita.
+                  </p>
                 </motion.section>
 
                 <motion.aside className={styles.summaryCard} {...reveal}>

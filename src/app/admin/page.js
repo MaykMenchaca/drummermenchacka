@@ -495,26 +495,7 @@ export default function AdminPage() {
                           <br />
                           <span className="text-gold">{appointment.time}</span>
                         </td>
-                        <td className={styles.conceptCell}>
-                          {appointment.concept}
-                          {appointment.reference_urls?.length ? (
-                            <div className={styles.refThumbs}>
-                              {appointment.reference_urls.map((ref) => (
-                                <a
-                                  key={ref.pathname || ref.url}
-                                  href={ref.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={styles.refThumb}
-                                  title="Ver imagen de referencia"
-                                >
-                                  {/* Imagen externa de Blob: <img> simple (no next/image). */}
-                                  <img src={ref.url} alt="Referencia" loading="lazy" />
-                                </a>
-                              ))}
-                            </div>
-                          ) : null}
-                        </td>
+                        <td className={styles.conceptCell}>{appointment.concept}</td>
                         <td>
                           <select
                             className={styles.statusSelect}
