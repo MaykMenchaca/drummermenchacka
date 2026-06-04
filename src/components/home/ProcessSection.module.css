@@ -1,0 +1,120 @@
+.process {
+  padding: 120px 0;
+  background-color: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+}
+
+.header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 72px;
+}
+
+.eyebrow {
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+}
+
+/* Grilla de 4 columnas con conector sutil entre pasos (desktop). */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 24px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  transition: transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-gold);
+}
+
+/* Conector dorado sutil entre tarjetas en desktop. */
+.card:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 52px;
+  right: -32px;
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--color-gold),
+    transparent
+  );
+  opacity: 0.4;
+}
+
+.number {
+  font-family: var(--font-title);
+  font-size: 3.25rem;
+  line-height: 1;
+  color: var(--color-border);
+  opacity: 0.6;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  background-color: rgba(212, 175, 55, 0.06);
+  margin-bottom: 24px;
+}
+
+.cardTitle {
+  font-family: var(--font-title);
+  font-size: 1.35rem;
+  margin: 0 0 12px;
+  color: #ffffff;
+}
+
+.cardText {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* Sin conectores horizontales en 2 columnas. */
+  .card:not(:last-child)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .process {
+    padding: 80px 0;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    margin-bottom: 48px;
+  }
+}

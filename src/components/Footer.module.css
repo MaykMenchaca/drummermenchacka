@@ -1,0 +1,72 @@
+/* Mejoras del footer aplicadas junto a la clase global `.footer`. */
+
+.footerEnhance {
+  padding-top: 80px;
+}
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.ctaText {
+  font-family: var(--font-title);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.divider {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-border),
+    transparent
+  );
+}
+
+/* Las redes ahora son botones con icono: touch target >=44px. */
+.socials {
+  gap: 16px;
+}
+
+.social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.social:hover {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+.social:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  color: var(--color-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social:hover {
+    transform: none;
+  }
+}

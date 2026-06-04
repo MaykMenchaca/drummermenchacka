@@ -1,0 +1,139 @@
+.panel {
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+    rgba(16, 16, 16, 0.78);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+  padding: 24px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.iconButton {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f5ead0;
+  cursor: pointer;
+  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+}
+
+.iconButton:hover {
+  border-color: rgba(212, 175, 55, 0.65);
+}
+
+.iconButton:active {
+  transform: scale(0.97);
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.weekdays {
+  margin-bottom: 12px;
+  color: rgba(245, 234, 208, 0.58);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.grid {
+  gap: 8px;
+}
+
+.day {
+  position: relative;
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.025);
+  color: #f7f3ea;
+  cursor: pointer;
+  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+}
+
+.day:hover:not(:disabled) {
+  border-color: rgba(212, 175, 55, 0.62);
+  transform: translateY(-1px);
+}
+
+.day:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.day:disabled {
+  color: rgba(255, 255, 255, 0.22);
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.muted {
+  opacity: 0.26;
+}
+
+.open i,
+.today::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  border-radius: 999px;
+  transform: translateX(-50%);
+}
+
+.open i {
+  bottom: 7px;
+  width: 5px;
+  height: 5px;
+  background: #d4af37;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.7);
+}
+
+.today::after {
+  top: 7px;
+  width: 16px;
+  height: 1px;
+  background: rgba(245, 234, 208, 0.75);
+}
+
+.selected {
+  border-color: #d4af37;
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.95), rgba(171, 127, 38, 0.92));
+  color: #070707;
+  font-weight: 800;
+}
+
+.selected.open i {
+  background: #070707;
+  box-shadow: none;
+}
+
+@media (max-width: 560px) {
+  .panel {
+    padding: 18px;
+  }
+
+  .grid {
+    gap: 6px;
+  }
+
+  .day {
+    min-height: 44px;
+  }
+}

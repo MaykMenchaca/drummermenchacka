@@ -1,0 +1,23 @@
+/* Header.module.css — refuerzo del header sin tocar globals.css.
+   La apariencia base (sticky, blur, borde) la sigue dando la clase global .header.
+   Aquí solo añadimos la transición y el estado compacto al hacer scroll. */
+
+/* Transición suave de las propiedades baratas. El padding no es transform/opacity,
+   pero es barato y la transición se mantiene <= var(--dur-base). */
+.headerEnhance {
+  transition:
+    padding var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+  will-change: padding, background-color;
+}
+
+/* Estado compacto: menos padding vertical, fondo más opaco + sombra sutil. */
+.scrolled {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: rgba(13, 13, 13, 0.95);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}

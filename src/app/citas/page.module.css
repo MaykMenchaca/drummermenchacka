@@ -1,0 +1,300 @@
+.shell {
+  min-height: 100vh;
+  padding: 88px 0 72px;
+  background:
+    radial-gradient(circle at 18% 6%, rgba(212, 175, 55, 0.12), transparent 34%),
+    linear-gradient(180deg, #090909 0%, #101010 58%, #080808 100%);
+}
+
+.container {
+  width: min(1400px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 32px;
+  padding-bottom: 28px;
+  margin-bottom: 34px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.headingCopy,
+.muted,
+.helper {
+  color: #d0c5af;
+}
+
+.headingCopy {
+  max-width: 360px;
+}
+
+.bookingGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr) minmax(280px, 360px);
+  align-items: start;
+  gap: 28px;
+}
+
+.panel,
+.summaryCard,
+.successPanel {
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+    rgba(16, 16, 16, 0.78);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.panel {
+  padding: 26px;
+}
+
+.slotSection {
+  margin-top: 26px;
+}
+
+.slotHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+  color: #f7f3ea;
+}
+
+.slotHead span {
+  color: #d0c5af;
+  font-size: 0.86rem;
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.slotButton {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.035);
+  color: #f7f3ea;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0;
+  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+}
+
+.slotButton:hover:not(:disabled) {
+  border-color: rgba(212, 175, 55, 0.62);
+}
+
+.slotButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.slotButton:disabled {
+  color: rgba(255, 255, 255, 0.28);
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.slotSelected {
+  border-color: #d4af37;
+  color: #070707;
+  background: linear-gradient(145deg, #d4af37, #b98c27);
+}
+
+.formGroup {
+  margin-top: 22px;
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+  color: #fffaf0;
+  font: inherit;
+  outline: none;
+  transition: border-color 180ms ease-out;
+}
+
+.input:focus {
+  border-color: #d4af37;
+}
+
+.textarea {
+  min-height: 118px;
+  resize: vertical;
+}
+
+.uploader {
+  min-height: 132px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  border: 1px dashed rgba(212, 175, 55, 0.32);
+  color: #d4af37;
+  cursor: pointer;
+  background: rgba(212, 175, 55, 0.035);
+  transition: transform 180ms ease-out, opacity 180ms ease-out, border-color 180ms ease-out;
+}
+
+.uploader input {
+  display: none;
+}
+
+.uploader:active {
+  transform: scale(0.99);
+}
+
+.helper {
+  margin-top: 9px;
+  font-size: 0.82rem;
+}
+
+.summaryCard {
+  position: sticky;
+  top: 112px;
+  padding: 28px;
+}
+
+.summaryCard h2 {
+  margin: 10px 0 24px;
+  font-size: 1.8rem;
+}
+
+.summaryCard dl {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 24px;
+}
+
+.summaryCard div {
+  min-width: 0;
+}
+
+.summaryCard dt {
+  color: #d0c5af;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.summaryCard dd {
+  color: #fffaf0;
+  overflow-wrap: anywhere;
+}
+
+.estimate {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.estimateIcon {
+  min-width: 48px;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.estimate strong {
+  display: block;
+  color: #fffaf0;
+  font-size: 1.2rem;
+}
+
+.confirmButton {
+  width: 100%;
+}
+
+.mobileSummary {
+  display: none;
+}
+
+.successPanel {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 58px;
+  text-align: center;
+}
+
+.successMark {
+  width: 86px;
+  height: 86px;
+  display: inline-grid;
+  place-items: center;
+  margin-bottom: 26px;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  box-shadow: 0 0 36px rgba(212, 175, 55, 0.18);
+}
+
+.successPanel h1 {
+  font-size: 2.6rem;
+  margin-bottom: 14px;
+}
+
+.successPanel p {
+  color: #d0c5af;
+  margin-bottom: 30px;
+}
+
+.alert {
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 111, 111, 0.48);
+  background: rgba(255, 65, 65, 0.1);
+  color: #ffb4b4;
+}
+
+@media (max-width: 1100px) {
+  .bookingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryCard {
+    display: none;
+  }
+
+  .mobileSummary {
+    display: block;
+    margin-top: 24px;
+    padding: 22px;
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+@media (max-width: 720px) {
+  .shell {
+    padding: 56px 0;
+  }
+
+  .container {
+    width: min(100% - 32px, 1400px);
+  }
+
+  .heading {
+    display: block;
+  }
+
+  .panel,
+  .successPanel {
+    padding: 20px;
+  }
+
+  .slotGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
