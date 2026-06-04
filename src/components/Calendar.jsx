@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Icon from "./Icon";
 import styles from "./Calendar.module.css";
 
@@ -60,7 +59,6 @@ export default function Calendar({
   admin = false,
 }) {
   const days = buildMonthDays(monthDate);
-  const reduceMotion = useReducedMotion();
   const todayKey = toDateKey(new Date());
 
   function changeMonth(offset) {
@@ -99,15 +97,7 @@ export default function Calendar({
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={toMonthKey(monthDate)}
-          className={styles.grid}
-          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
-          transition={{ duration: 0.22, ease: "easeOut" }}
-        >
+      <div className={styles.grid}>
           {days.map((day) => {
             const daySlots = availability[day.dateKey]?.slots || [];
             const hasOpenSlots = admin || daySlots.some((slot) => !slot.booked);
@@ -135,8 +125,7 @@ export default function Calendar({
               </button>
             );
           })}
-        </motion.div>
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

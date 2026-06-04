@@ -42,11 +42,12 @@
 .summaryCard,
 .successPanel {
   border: 1px solid rgba(212, 175, 55, 0.18);
+  /* Fondo sólido (sin backdrop-filter): el blur de fondo re-rasteriza cada frame
+     al hacer scroll y trababa el móvil. Se ve casi igual y va fluido. */
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
-    rgba(16, 16, 16, 0.78);
-  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(10px);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(18, 18, 18, 0.97);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
 .panel {
@@ -329,10 +330,9 @@
     padding: 16px;
     border: 1px solid rgba(212, 175, 55, 0.3);
     background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025)),
-      rgba(10, 10, 10, 0.94);
-    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(8px);
+      linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+      rgba(10, 10, 10, 0.98);
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
   }
 
   .mobileSummaryDetails {

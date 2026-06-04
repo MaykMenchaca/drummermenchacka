@@ -21,11 +21,11 @@
 .panel,
 .statCard {
   border: 1px solid rgba(212, 175, 55, 0.18);
+  /* Fondo sólido (sin backdrop-filter) para no trabar el scroll en móvil. */
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
-    rgba(16, 16, 16, 0.78);
-  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(8px);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(18, 18, 18, 0.97);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
 }
 
 .authPanel {
@@ -445,10 +445,9 @@
   align-items: center;
   justify-content: center;
   border: none;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   color: #fff;
   cursor: pointer;
-  backdrop-filter: blur(2px);
   transition: background 180ms ease-out;
 }
 

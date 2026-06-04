@@ -33,6 +33,8 @@ export default function Citas() {
     return availability[selectedDate]?.slots || [];
   }, [availability, selectedDate]);
 
+  // Solo se pide la disponibilidad al cambiar de MES (no en cada clic de día).
+  // Antes dependía de selectedDate y se re-pedía por red en cada selección → trabazón.
   useEffect(() => {
     let isActive = true;
     fetch(`/api/availability?month=${toMonthKey(monthDate)}`)
@@ -42,18 +44,14 @@ export default function Citas() {
         if (!ok) throw new Error(data.error || "No se pudo cargar la agenda.");
         const nextAvailability = normalizeAvailability(data.days);
         setAvailability(nextAvailability);
-        const currentSelection = nextAvailability[selectedDate]?.slots?.some(
-          (slot) => !slot.booked
+        // Auto-seleccionar el primer día abierto del mes recién cargado.
+        const firstOpenDay = Object.entries(nextAvailability).find(([, day]) =>
+          day.slots.some((slot) => !slot.booked)
         );
-        if (!currentSelection) {
-          const firstOpenDay = Object.entries(nextAvailability).find(([, day]) =>
-            day.slots.some((slot) => !slot.booked)
-          );
-          setSelectedDate(firstOpenDay?.[0] || "");
-          setSelectedTime(
-            firstOpenDay?.[1].slots.find((slot) => !slot.booked)?.time || ""
-          );
-        }
+        setSelectedDate(firstOpenDay?.[0] || "");
+        setSelectedTime(
+          firstOpenDay?.[1]?.slots.find((slot) => !slot.booked)?.time || ""
+        );
       })
       .catch((error) => {
         if (isActive) setErrorMsg(error.message);
@@ -62,7 +60,7 @@ export default function Citas() {
     return () => {
       isActive = false;
     };
-  }, [monthDate, selectedDate]);
+  }, [monthDate]);
 
   function handleInputChange(event) {
     const { name, value } = event.target;
