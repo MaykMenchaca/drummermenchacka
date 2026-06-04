@@ -1,5 +1,6 @@
 import pg from "pg";
 import { randomUUID } from "crypto";
+import { del } from "@vercel/blob";
 
 const { Pool } = pg;
 
@@ -141,6 +142,7 @@ export async function ensureSchema() {
       time TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'pending',
       token TEXT UNIQUE,
+      reference_urls JSONB NOT NULL DEFAULT '[]'::jsonb,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
       CONSTRAINT appointments_status_check
         CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled'))
@@ -160,6 +162,7 @@ export async function ensureSchema() {
 
     ALTER TABLE appointments ADD COLUMN IF NOT EXISTS phone TEXT;
     ALTER TABLE appointments ADD COLUMN IF NOT EXISTS token TEXT UNIQUE;
+    ALTER TABLE appointments ADD COLUMN IF NOT EXISTS reference_urls JSONB NOT NULL DEFAULT '[]'::jsonb;
     ALTER TABLE appointments DROP CONSTRAINT IF EXISTS appointments_status_check;
     ALTER TABLE appointments ADD CONSTRAINT appointments_status_check
       CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled'));
@@ -207,6 +210,35 @@ function normalizeDate(date) {
     throw new Error("Date must use YYYY-MM-DD format.");
   }
   return date;
+}
+
+function normalizeReferences(references) {
+  if (references === undefined || references === null) return [];
+  if (!Array.isArray(references)) {
+    throw new Error("References must be an array.");
+  }
+
+  return references
+    .map((reference) => ({
+      url: String(reference?.url || "").trim(),
+      pathname: String(reference?.pathname || "").trim(),
+    }))
+    .filter((reference) => reference.url && reference.pathname);
+}
+
+async function deleteBlobReferences(references) {
+  if (!Array.isArray(references)) return;
+
+  for (const reference of references) {
+    const pathname = String(reference?.pathname || "").trim();
+    if (!pathname) continue;
+
+    try {
+      await del(pathname);
+    } catch {
+      // El archivo pudo haber sido borrado manualmente; no debe bloquear la limpieza de la cita.
+    }
+  }
 }
 
 export function normalizeSlots(slots) {
@@ -288,11 +320,20 @@ export async function setAvailability(date, slots) {
   return result.rows[0];
 }
 
-export async function createAppointment({ name, email, phone, concept, date, time }) {
+export async function createAppointment({
+  name,
+  email,
+  phone,
+  concept,
+  date,
+  time,
+  references,
+}) {
   await ensureSchema();
   const normalizedDate = normalizeDate(date);
   const normalizedTime = String(time || "").trim();
   const normalizedPhone = String(phone || "").trim();
+  const normalizedReferences = normalizeReferences(references);
 
   if (!name?.trim() || !email?.trim() || !concept?.trim()) {
     throw new Error("Name, email and concept are required.");
@@ -318,10 +359,10 @@ export async function createAppointment({ name, email, phone, concept, date, tim
     const token = randomUUID();
     const result = await getPool().query(
       `
-        INSERT INTO appointments (name, email, phone, concept, date, time, token)
-        VALUES ($1, $2, $3, $4, $5::date, $6, $7)
+        INSERT INTO appointments (name, email, phone, concept, date, time, token, reference_urls)
+        VALUES ($1, $2, $3, $4, $5::date, $6, $7, $8::jsonb)
         RETURNING id, name, email, concept, to_char(date, 'YYYY-MM-DD') AS date,
-          phone, time, status, token, created_at
+          phone, time, status, token, reference_urls, created_at
       `,
       [
         name.trim(),
@@ -331,6 +372,7 @@ export async function createAppointment({ name, email, phone, concept, date, tim
         normalizedDate,
         normalizedTime,
         token,
+        JSON.stringify(normalizedReferences),
       ]
     );
     return result.rows[0];
@@ -346,7 +388,7 @@ export async function listAppointments() {
   await ensureSchema();
   const result = await getPool().query(`
     SELECT id, name, email, concept, to_char(date, 'YYYY-MM-DD') AS date,
-      phone, time, status, token, created_at
+      phone, time, status, token, reference_urls, created_at
     FROM appointments
     ORDER BY date DESC, time DESC, created_at DESC
   `);
@@ -476,7 +518,7 @@ export async function updateAppointmentStatus(id, status) {
       SET status = $2
       WHERE id = $1
       RETURNING id, name, email, phone, concept, to_char(date, 'YYYY-MM-DD') AS date,
-        time, status, token, created_at
+        time, status, token, reference_urls, created_at
     `,
     [id, normalizedStatus]
   );
@@ -492,6 +534,19 @@ export async function updateAppointmentStatus(id, status) {
 
 export async function deleteAppointment(id) {
   await ensureSchema();
+  const existing = await getPool().query(
+    "SELECT reference_urls FROM appointments WHERE id = $1",
+    [id]
+  );
+
+  if (!existing.rows[0]) {
+    const error = new Error("Appointment not found.");
+    error.code = "NOT_FOUND";
+    throw error;
+  }
+
+  await deleteBlobReferences(existing.rows[0].reference_urls);
+
   const result = await getPool().query(
     "DELETE FROM appointments WHERE id = $1 RETURNING id",
     [id]
@@ -509,6 +564,20 @@ export async function deleteAppointment(id) {
 export async function purgeOldAppointments(months = 3) {
   await ensureSchema();
   const safeMonths = Math.max(1, Number.parseInt(months, 10) || 3);
+  const expired = await getPool().query(
+    `
+      SELECT id, reference_urls
+      FROM appointments
+      WHERE status IN ('completed', 'cancelled')
+        AND date < (CURRENT_DATE - ($1::int * interval '1 month'))
+    `,
+    [safeMonths]
+  );
+
+  for (const row of expired.rows) {
+    await deleteBlobReferences(row.reference_urls);
+  }
+
   const result = await getPool().query(
     `
       DELETE FROM appointments
@@ -533,7 +602,7 @@ export async function getAppointmentByToken(token) {
   const result = await getPool().query(
     `
       SELECT id, name, email, phone, concept, to_char(date, 'YYYY-MM-DD') AS date,
-        time, status, token, created_at
+        time, status, token, reference_urls, created_at
       FROM appointments
       WHERE token = $1
       LIMIT 1

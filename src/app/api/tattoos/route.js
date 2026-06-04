@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
+import { revalidatePath } from "next/cache";
 import sharp from "sharp";
 import { isAdmin } from "@/app/lib/auth";
 import { createTattoo, listTattoos } from "@/app/lib/db";
@@ -99,6 +100,8 @@ export async function POST(request) {
       image_url: blob.url,
       blob_path: blob.pathname || blobPath,
     });
+
+    revalidatePath("/");
 
     return NextResponse.json({ tattoo }, { status: 201 });
   } catch (error) {

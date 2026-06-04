@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { del } from "@vercel/blob";
+import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/app/lib/auth";
 import { deleteTattoo, updateTattoo } from "@/app/lib/db";
 
@@ -22,6 +23,7 @@ export async function PATCH(request, { params }) {
     const id = getId(await params);
     const body = await request.json().catch(() => ({}));
     const tattoo = await updateTattoo(id, body);
+    revalidatePath("/");
     return NextResponse.json({ tattoo });
   } catch (error) {
     return NextResponse.json(
@@ -43,6 +45,8 @@ export async function DELETE(request, { params }) {
     if (tattoo.blob_path) {
       await del(tattoo.blob_path);
     }
+
+    revalidatePath("/");
 
     return NextResponse.json({ deleted: true, tattoo });
   } catch (error) {

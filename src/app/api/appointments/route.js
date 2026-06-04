@@ -32,6 +32,7 @@ export async function POST(request) {
       concept: body.concept,
       date: body.date,
       time: body.time,
+      references: Array.isArray(body.references) ? body.references : [],
     });
 
     return NextResponse.json({ appointment }, { status: 201 });
