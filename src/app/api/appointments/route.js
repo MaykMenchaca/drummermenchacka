@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/app/lib/auth";
 import { createAppointment, listAppointments } from "@/app/lib/db";
+import {
+  MEXICAN_WHATSAPP_ERROR,
+  normalizeMexicanWhatsApp,
+} from "@/app/lib/phone";
 
 export async function GET(request) {
   if (!isAdmin(request)) {
@@ -18,9 +22,11 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    if (!body.phone?.trim()) {
+    const normalizedPhone = normalizeMexicanWhatsApp(body.phone);
+
+    if (!normalizedPhone) {
       return NextResponse.json(
-        { error: "El WhatsApp es obligatorio." },
+        { error: MEXICAN_WHATSAPP_ERROR },
         { status: 400 }
       );
     }
@@ -28,7 +34,7 @@ export async function POST(request) {
     const appointment = await createAppointment({
       name: body.name,
       email: body.email,
-      phone: body.phone,
+      phone: normalizedPhone,
       concept: body.concept,
       date: body.date,
       time: body.time,

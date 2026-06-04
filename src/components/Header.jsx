@@ -1,23 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Icon from "./Icon";
 import styles from "./Header.module.css";
 
 export default function Header({ active = "home" }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  // Shrink-on-scroll: header compacto + fondo más opaco pasados 40px.
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const links = [
     { href: "/#portfolio", label: "Portafolio", key: "portfolio" },
@@ -28,11 +17,7 @@ export default function Header({ active = "home" }) {
   ];
 
   return (
-    <header
-      className={`header ${styles.headerEnhance} ${
-        scrolled ? styles.scrolled : ""
-      }`}
-    >
+    <header className={`header ${styles.headerEnhance}`}>
       <div className="container header-inner">
         <Link href="/" className="logo" onClick={() => setIsOpen(false)}>
           Drummer Menchacka

@@ -6,6 +6,10 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Icon from "@/components/Icon";
 import Link from "next/link";
+import {
+  MEXICAN_WHATSAPP_ERROR,
+  normalizeMexicanWhatsApp,
+} from "@/app/lib/phone";
 import styles from "./page.module.css";
 
 function normalizeAvailability(days = []) {
@@ -92,6 +96,11 @@ export default function Citas() {
       setErrorMsg("Completa todos los campos del formulario, incluido tu WhatsApp.");
       return;
     }
+    const normalizedPhone = normalizeMexicanWhatsApp(formData.phone);
+    if (!normalizedPhone) {
+      setErrorMsg(MEXICAN_WHATSAPP_ERROR);
+      return;
+    }
 
     setIsSubmitting(true);
     setErrorMsg("");
@@ -102,6 +111,7 @@ export default function Citas() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          phone: normalizedPhone,
           date: selectedDate,
           time: selectedTime,
         }),
@@ -287,7 +297,7 @@ export default function Citas() {
 
                   <div className={styles.formGroup}>
                     <label className="form-label label-caps" htmlFor="phone">
-                      WhatsApp
+                      WhatsApp con lada de Mexico
                     </label>
                     <input
                       id="phone"
@@ -295,7 +305,7 @@ export default function Citas() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      placeholder="Ej. 52 449 123 4567"
+                      placeholder="Ej. +52 449 123 4567"
                       className={styles.input}
                       required
                     />

@@ -307,8 +307,9 @@ h1, h2, h3, h4, h5, h6 {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(13, 13, 13, 0.85);
-  backdrop-filter: blur(10px);
+  background: rgba(13, 13, 13, 0.98);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   border-bottom: 1px solid var(--color-border);
   padding: 24px 0;
 }
@@ -361,7 +362,8 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     gap: 0;
     background: rgba(13, 13, 13, 0.98);
-    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     border-top: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
     padding: 8px 24px 16px;
