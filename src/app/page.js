@@ -9,8 +9,9 @@ import FaqSection from "@/components/home/FaqSection";
 import InstagramSection from "@/components/home/InstagramSection";
 import { listTattoos } from "@/app/lib/db";
 
-// Refleja las fotos nuevas que el artista sube desde /admin.
-export const dynamic = "force-dynamic";
+// ISR: el home se cachea y se sirve rápido; se revalida cada 5 min.
+// La API de galería llama revalidatePath('/') al subir/borrar para refrescar al instante.
+export const revalidate = 300;
 
 export default async function Home() {
   let tattoos = [];
