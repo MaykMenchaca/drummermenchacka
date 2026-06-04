@@ -1,0 +1,85 @@
+.shell {
+  min-height: calc(100vh - 220px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 56px 40px;
+}
+
+.card h1 {
+  font-size: 2rem;
+  margin: 8px 0 24px;
+}
+
+.mark {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  border: 2px solid var(--color-gold);
+  color: var(--color-gold);
+}
+
+.confirmed,
+.completed {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.18);
+}
+
+.pending {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.expired {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.details dt {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.details dd {
+  color: #fff;
+  font-weight: 500;
+}
+
+.note {
+  color: var(--color-text-muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}

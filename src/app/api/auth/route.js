@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { clearAdminCookie, isAdmin, setAdminCookie } from "@/app/lib/auth";
+import { clearAdminCookie, isAdmin, setAdminCookie, verifyPassword } from "@/app/lib/auth";
 
 export async function GET(request) {
   return NextResponse.json({ authenticated: isAdmin(request) });
@@ -9,7 +9,7 @@ export async function POST(request) {
   const body = await request.json().catch(() => ({}));
   const password = String(body.password || "");
 
-  if (password !== (process.env.ADMIN_PASSWORD || "172003")) {
+  if (!verifyPassword(password)) {
     return NextResponse.json({ error: "Contraseña incorrecta." }, { status: 401 });
   }
 

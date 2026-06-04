@@ -3,12 +3,34 @@ import { createHmac, timingSafeEqual } from "crypto";
 const COOKIE_NAME = "drummer_admin";
 const SESSION_VALUE = "admin";
 
+// La contraseña del admin es obligatoria en producción. En desarrollo, si no se
+// configuró, se usa un valor local de conveniencia (nunca llega a producción).
+function getAdminPassword() {
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("ADMIN_PASSWORD no está configurada.");
+    }
+    return "172003";
+  }
+  return password;
+}
+
 function getSecret() {
-  return process.env.ADMIN_PASSWORD || "172003";
+  return getAdminPassword();
 }
 
 function sign(value) {
   return createHmac("sha256", getSecret()).update(value).digest("hex");
+}
+
+// Comparación en tiempo constante de la contraseña ingresada.
+export function verifyPassword(input) {
+  const expected = getAdminPassword();
+  const inputBuffer = Buffer.from(String(input ?? ""));
+  const expectedBuffer = Buffer.from(expected);
+  if (inputBuffer.length !== expectedBuffer.length) return false;
+  return timingSafeEqual(inputBuffer, expectedBuffer);
 }
 
 export function createSessionCookie() {

@@ -18,9 +18,17 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
+    if (!body.phone?.trim()) {
+      return NextResponse.json(
+        { error: "El WhatsApp es obligatorio." },
+        { status: 400 }
+      );
+    }
+
     const appointment = await createAppointment({
       name: body.name,
       email: body.email,
+      phone: body.phone,
       concept: body.concept,
       date: body.date,
       time: body.time,

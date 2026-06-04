@@ -250,6 +250,44 @@
   margin-bottom: 30px;
 }
 
+.trackBox {
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  background: rgba(212, 175, 55, 0.04);
+  padding: 20px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.trackBox :global(.label-caps) {
+  color: #f7f3ea;
+}
+
+.trackRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 4px;
+  flex-wrap: wrap;
+}
+
+.trackLink {
+  flex: 1;
+  min-width: 0;
+  color: #d4af37;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+  padding-bottom: 4px;
+}
+
+.successActions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .alert {
   padding: 14px 16px;
   margin-bottom: 24px;

@@ -11,7 +11,17 @@ import Calendar, {
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Icon from "@/components/Icon";
+import { CATEGORIES } from "@/components/home/data";
 import styles from "./page.module.css";
+
+const UPLOAD_CATEGORIES = CATEGORIES.filter((c) => c !== "Todos");
+const STATUS_OPTIONS = ["pending", "confirmed", "completed", "cancelled"];
+const STATUS_LABEL = {
+  pending: "Pendiente",
+  confirmed: "Confirmada",
+  completed: "Completada",
+  cancelled: "Cancelada",
+};
 
 function normalizeAvailability(days = []) {
   return days.reduce((acc, day) => {
@@ -32,6 +42,18 @@ export default function AdminPage() {
   const [appointments, setAppointments] = useState([]);
   const [customSlot, setCustomSlot] = useState("");
   const [status, setStatus] = useState("");
+
+  // Galería
+  const [tattoos, setTattoos] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [gallery, setGallery] = useState({
+    title: "",
+    category: UPLOAD_CATEGORIES[0] || "",
+    hours: "",
+    featured: false,
+  });
+  const [uploading, setUploading] = useState(false);
+  const [galleryMsg, setGalleryMsg] = useState("");
 
   const selectedSlots = useMemo(() => {
     return (availability[selectedDate]?.slots || []).map((slot) => slot.time);
@@ -116,9 +138,109 @@ export default function AdminPage() {
     }
   }
 
+  // Cargar galería una vez autenticado.
+  useEffect(() => {
+    if (!authenticated) return;
+    let isActive = true;
+    fetch("/api/tattoos")
+      .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+      .then(({ ok, data }) => {
+        if (isActive && ok) setTattoos(data.tattoos || []);
+      });
+    return () => {
+      isActive = false;
+    };
+  }, [authenticated]);
+
   async function handleLogout() {
     await fetch("/api/auth", { method: "DELETE" });
     setAuthenticated(false);
+  }
+
+  // ---- Galería ----
+  async function handleUpload(event) {
+    event.preventDefault();
+    if (!imageFile) {
+      setGalleryMsg("Elige una foto.");
+      return;
+    }
+    if (!gallery.title.trim() || !gallery.category) {
+      setGalleryMsg("Título y categoría son obligatorios.");
+      return;
+    }
+    setUploading(true);
+    setGalleryMsg("");
+    try {
+      const data = new FormData();
+      data.append("image", imageFile);
+      data.append("title", gallery.title.trim());
+      data.append("category", gallery.category);
+      data.append("hours", gallery.hours.trim());
+      data.append("featured", gallery.featured ? "true" : "false");
+
+      const response = await fetch("/api/tattoos", { method: "POST", body: data });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "No se pudo subir la foto.");
+
+      setTattoos((current) => [...current, result.tattoo]);
+      setGallery({ title: "", category: UPLOAD_CATEGORIES[0] || "", hours: "", featured: false });
+      setImageFile(null);
+      event.target.reset?.();
+      setGalleryMsg("Foto publicada en el portafolio.");
+    } catch (error) {
+      setGalleryMsg(error.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleDeleteTattoo(id) {
+    if (!window.confirm("¿Borrar esta foto del portafolio?")) return;
+    const response = await fetch(`/api/tattoos/${id}`, { method: "DELETE" });
+    if (response.ok) {
+      setTattoos((current) => current.filter((t) => t.id !== id));
+    } else {
+      const data = await response.json().catch(() => ({}));
+      setGalleryMsg(data.error || "No se pudo borrar.");
+    }
+  }
+
+  // ---- Citas ----
+  async function handleStatusChange(id, newStatus) {
+    const response = await fetch(`/api/appointments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setAppointments((current) =>
+        current.map((a) => (a.id === id ? { ...a, status: data.appointment.status } : a))
+      );
+    } else {
+      setStatus("No se pudo actualizar el estado.");
+    }
+  }
+
+  async function handleDeleteAppointment(id) {
+    if (!window.confirm("¿Borrar esta cita? No se puede deshacer.")) return;
+    const response = await fetch(`/api/appointments/${id}`, { method: "DELETE" });
+    if (response.ok) {
+      setAppointments((current) => current.filter((a) => a.id !== id));
+    } else {
+      setStatus("No se pudo borrar la cita.");
+    }
+  }
+
+  function whatsappLink(appointment) {
+    const phone = String(appointment.phone || "").replace(/\D/g, "");
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const trackUrl = appointment.token ? `${origin}/cita/${appointment.token}` : "";
+    const message =
+      `Hola ${appointment.name}, soy Drummer Menchacka. Confirmo tu cita para el ` +
+      `${appointment.date} a las ${appointment.time}.` +
+      (trackUrl ? ` Sigue tu cita aquí: ${trackUrl}` : "");
+    return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   }
 
   function toggleSlot(slot) {
@@ -346,38 +468,172 @@ export default function AdminPage() {
                 <thead>
                   <tr>
                     <th>Cliente</th>
-                    <th>Contacto</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
+                    <th>Fecha / Hora</th>
                     <th>Concepto</th>
                     <th>Estado</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {appointments.length ? (
                     appointments.map((appointment) => (
                       <tr key={appointment.id}>
-                        <td>{appointment.name}</td>
-                        <td>{appointment.email}</td>
-                        <td>{appointment.date}</td>
-                        <td>{appointment.time}</td>
-                        <td>{appointment.concept}</td>
                         <td>
-                          <span className={`${styles.statusPill} ${styles[appointment.status] || ""}`}>
-                            {appointment.status}
-                          </span>
+                          <strong>{appointment.name}</strong>
+                          <br />
+                          <span className={styles.subtle}>{appointment.email}</span>
+                          {appointment.phone ? (
+                            <>
+                              <br />
+                              <span className={styles.subtle}>{appointment.phone}</span>
+                            </>
+                          ) : null}
+                        </td>
+                        <td>
+                          {appointment.date}
+                          <br />
+                          <span className="text-gold">{appointment.time}</span>
+                        </td>
+                        <td className={styles.conceptCell}>{appointment.concept}</td>
+                        <td>
+                          <select
+                            className={styles.statusSelect}
+                            value={appointment.status}
+                            onChange={(event) =>
+                              handleStatusChange(appointment.id, event.target.value)
+                            }
+                            aria-label="Cambiar estado de la cita"
+                          >
+                            {STATUS_OPTIONS.map((option) => (
+                              <option key={option} value={option}>
+                                {STATUS_LABEL[option]}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <div className={styles.rowActions}>
+                            {appointment.phone ? (
+                              <a
+                                className={styles.iconAction}
+                                href={whatsappLink(appointment)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`Escribir a ${appointment.name} por WhatsApp`}
+                                title="Confirmar por WhatsApp"
+                              >
+                                <Icon name="whatsapp" size={18} />
+                              </a>
+                            ) : null}
+                            <button
+                              type="button"
+                              className={styles.iconAction}
+                              onClick={() => handleDeleteAppointment(appointment.id)}
+                              aria-label={`Borrar cita de ${appointment.name}`}
+                              title="Borrar cita"
+                            >
+                              <Icon name="trash" size={18} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className={styles.emptyCell}>
+                      <td colSpan="5" className={styles.emptyCell}>
                         Aun no hay solicitudes guardadas.
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
+            </div>
+          </motion.section>
+
+          <motion.section className={`${styles.panel} ${styles.appointmentsPanel}`} {...reveal}>
+            <div className={styles.panelHead}>
+              <div>
+                <p className="label-caps text-gold">Galería</p>
+                <h2>Sube y cataloga tus trabajos</h2>
+              </div>
+            </div>
+
+            <form className={styles.galleryForm} onSubmit={handleUpload}>
+              <label className={styles.uploader} htmlFor="tattoo-image">
+                <Icon name="upload" size={26} />
+                <span className="label-caps">
+                  {imageFile ? imageFile.name : "Toca para elegir o tomar una foto"}
+                </span>
+                <input
+                  id="tattoo-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => setImageFile(event.target.files?.[0] || null)}
+                />
+              </label>
+
+              <div className={styles.galleryFields}>
+                <input
+                  type="text"
+                  className={styles.input}
+                  placeholder="Título (ej. Fénix Ascendente)"
+                  value={gallery.title}
+                  onChange={(event) => setGallery((g) => ({ ...g, title: event.target.value }))}
+                  required
+                />
+                <select
+                  className={styles.input}
+                  value={gallery.category}
+                  onChange={(event) => setGallery((g) => ({ ...g, category: event.target.value }))}
+                >
+                  {UPLOAD_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  className={styles.input}
+                  placeholder="Duración (ej. 4 Horas)"
+                  value={gallery.hours}
+                  onChange={(event) => setGallery((g) => ({ ...g, hours: event.target.value }))}
+                />
+                <label className={styles.checkRow}>
+                  <input
+                    type="checkbox"
+                    checked={gallery.featured}
+                    onChange={(event) => setGallery((g) => ({ ...g, featured: event.target.checked }))}
+                  />
+                  <span>Destacada</span>
+                </label>
+              </div>
+
+              <button type="submit" className={`btn btn-primary ${styles.fullButton}`} disabled={uploading}>
+                {uploading ? "Subiendo…" : "Publicar foto"}
+              </button>
+              {galleryMsg ? <p className={styles.statusLine}>{galleryMsg}</p> : null}
+            </form>
+
+            <div className={styles.galleryGrid}>
+              {tattoos.map((tattoo) => (
+                <figure key={tattoo.id} className={styles.galleryItem}>
+                  <img src={tattoo.image_url} alt={tattoo.title} loading="lazy" />
+                  <figcaption>
+                    <span>{tattoo.title}</span>
+                    <small>{tattoo.category}</small>
+                  </figcaption>
+                  <button
+                    type="button"
+                    className={styles.galleryDelete}
+                    onClick={() => handleDeleteTattoo(tattoo.id)}
+                    aria-label={`Borrar ${tattoo.title}`}
+                    title="Borrar"
+                  >
+                    <Icon name="trash" size={16} />
+                  </button>
+                </figure>
+              ))}
             </div>
           </motion.section>
         </div>

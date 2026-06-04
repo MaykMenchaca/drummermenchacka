@@ -7,14 +7,25 @@ import PortfolioSection from "@/components/home/PortfolioSection";
 import ProcessSection from "@/components/home/ProcessSection";
 import FaqSection from "@/components/home/FaqSection";
 import InstagramSection from "@/components/home/InstagramSection";
+import { listTattoos } from "@/app/lib/db";
 
-export default function Home() {
+// Refleja las fotos nuevas que el artista sube desde /admin.
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  let tattoos = [];
+  try {
+    tattoos = await listTattoos();
+  } catch {
+    tattoos = [];
+  }
+
   return (
     <>
       <Header active="portfolio" />
       <main>
         <HeroSection />
-        <PortfolioSection />
+        <PortfolioSection tattoos={tattoos} />
         <ProcessSection />
 
         {/* Filosofía */}

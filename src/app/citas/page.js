@@ -22,10 +22,12 @@ export default function Citas() {
   const [availability, setAvailability] = useState({});
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
-  const [formData, setFormData] = useState({ name: "", email: "", concept: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", concept: "" });
   const [references, setReferences] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [successToken, setSuccessToken] = useState("");
+  const [linkCopied, setLinkCopied] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   const selectedSlots = useMemo(() => {
@@ -86,8 +88,8 @@ export default function Citas() {
       setErrorMsg("Elige una fecha y horario disponible.");
       return;
     }
-    if (!formData.name || !formData.email || !formData.concept) {
-      setErrorMsg("Completa todos los campos del formulario.");
+    if (!formData.name || !formData.email || !formData.phone || !formData.concept) {
+      setErrorMsg("Completa todos los campos del formulario, incluido tu WhatsApp.");
       return;
     }
 
@@ -110,6 +112,7 @@ export default function Citas() {
         throw new Error(data.error || "Error al registrar la cita.");
       }
 
+      setSuccessToken(data.appointment?.token || "");
       setSubmitSuccess(true);
     } catch (error) {
       setErrorMsg(error.message);
@@ -144,15 +147,56 @@ export default function Citas() {
               <div className={styles.successMark}>
                 <Icon name="check" size={40} />
               </div>
-              <h1>Cita solicitada</h1>
+              <h1>Solicitud enviada</h1>
               <p>
                 Tu solicitud para el {selectedDateLabel} a las {selectedTime} fue
-                guardada. Drummer Menchacka revisara tu idea y te contactara en{" "}
-                {formData.email}.
+                registrada. <strong>Drummer Menchacka te confirmará por WhatsApp.</strong>
               </p>
-              <Link href="/" className="btn btn-primary">
-                Volver al portafolio
-              </Link>
+
+              {successToken ? (
+                <div className={styles.trackBox}>
+                  <p className="label-caps">Sigue el estado de tu cita</p>
+                  <div className={styles.trackRow}>
+                    <Link href={`/cita/${successToken}`} className={styles.trackLink}>
+                      /cita/{successToken.slice(0, 8)}…
+                    </Link>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        const url = `${window.location.origin}/cita/${successToken}`;
+                        navigator.clipboard?.writeText(url);
+                        setLinkCopied(true);
+                        setTimeout(() => setLinkCopied(false), 2000);
+                      }}
+                    >
+                      {linkCopied ? "¡Copiado!" : "Copiar enlace"}
+                    </button>
+                  </div>
+                  <p className={styles.helper}>
+                    Guarda este enlace: ahí verás cuando tu cita quede confirmada.
+                  </p>
+                </div>
+              ) : null}
+
+              <div className={styles.successActions}>
+                {process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ? (
+                  <a
+                    className="btn btn-primary"
+                    href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                      `Hola, acabo de agendar una cita para el ${selectedDateLabel} a las ${selectedTime}. Mi nombre es ${formData.name}.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon name="whatsapp" size={16} />
+                    <span style={{ marginLeft: "8px" }}>Escríbeme por WhatsApp</span>
+                  </a>
+                ) : null}
+                <Link href="/" className="btn btn-secondary">
+                  Volver al portafolio
+                </Link>
+              </div>
             </motion.section>
           ) : (
             <form onSubmit={handleSubmit}>
@@ -244,6 +288,22 @@ export default function Citas() {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="julian@example.com"
+                      className={styles.input}
+                      required
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className="form-label label-caps" htmlFor="phone">
+                      WhatsApp
+                    </label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="Ej. 52 449 123 4567"
                       className={styles.input}
                       required
                     />

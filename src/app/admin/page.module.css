@@ -255,6 +255,170 @@
   color: #d0c5af;
 }
 
+.subtle {
+  color: #d0c5af;
+  font-size: 0.82rem;
+}
+
+.conceptCell {
+  color: #d0c5af;
+  max-width: 320px;
+}
+
+.statusSelect {
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(20, 20, 20, 0.92);
+  color: #f7f3ea;
+  font: inherit;
+  cursor: pointer;
+}
+
+.statusSelect:focus {
+  border-color: #d4af37;
+  outline: none;
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+}
+
+.iconAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d0c5af;
+  cursor: pointer;
+  transition: color 180ms ease-out, border-color 180ms ease-out, transform 120ms ease-out;
+}
+
+.iconAction:hover {
+  color: #d4af37;
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.iconAction:active {
+  transform: scale(0.94);
+}
+
+.completed {
+  border-color: rgba(150, 180, 255, 0.4);
+  color: #bcd0ff;
+}
+
+/* Galería */
+.galleryForm {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.uploader {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 16px;
+  text-align: center;
+  border: 1px dashed rgba(212, 175, 55, 0.32);
+  color: #d4af37;
+  cursor: pointer;
+  background: rgba(212, 175, 55, 0.035);
+  transition: border-color 180ms ease-out;
+}
+
+.uploader:hover {
+  border-color: rgba(212, 175, 55, 0.6);
+}
+
+.uploader input {
+  display: none;
+}
+
+.galleryFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f7f3ea;
+  cursor: pointer;
+}
+
+.checkRow input {
+  width: 18px;
+  height: 18px;
+  accent-color: #d4af37;
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.galleryItem {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  background: #0c0c0c;
+}
+
+.galleryItem img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+}
+
+.galleryItem figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+}
+
+.galleryItem figcaption span {
+  color: #fffaf0;
+  font-size: 0.85rem;
+}
+
+.galleryItem figcaption small {
+  color: #d0c5af;
+  font-size: 0.7rem;
+}
+
+.galleryDelete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 180ms ease-out;
+}
+
+.galleryDelete:hover {
+  background: rgba(200, 40, 40, 0.85);
+}
+
 @media (max-width: 980px) {
   .adminGrid,
   .statsGrid {
@@ -290,6 +454,10 @@
   }
 
   .inlineForm {
+    grid-template-columns: 1fr;
+  }
+
+  .galleryFields {
     grid-template-columns: 1fr;
   }
 }

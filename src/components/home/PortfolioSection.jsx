@@ -25,13 +25,20 @@ function matchesCategory(piece, cat) {
   return category.includes(cat.toLowerCase());
 }
 
-export default function PortfolioSection() {
+export default function PortfolioSection({ tattoos }) {
   const [activeCat, setActiveCat] = useState("Todos");
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
+  // Fuente: la galería desde la base (si llega) o el catálogo estático de respaldo.
+  // Normaliza image_url -> image para que el resto del componente y el Lightbox no cambien.
+  const source = useMemo(() => {
+    const list = tattoos && tattoos.length ? tattoos : TATTOO_DATA;
+    return list.map((t) => ({ ...t, image: t.image_url || t.image }));
+  }, [tattoos]);
+
   const filtered = useMemo(
-    () => TATTOO_DATA.filter((p) => matchesCategory(p, activeCat)),
-    [activeCat]
+    () => source.filter((p) => matchesCategory(p, activeCat)),
+    [source, activeCat]
   );
 
   function selectCategory(cat) {
