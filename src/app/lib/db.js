@@ -98,9 +98,10 @@ const SEED_TATTOOS = [
 ];
 
 function getDatabaseUrl() {
-  const databaseUrl = process.env.DATABASE_URL;
+  // Acepta DATABASE_URL (local) o POSTGRES_URL (lo inyecta la integración Neon de Vercel).
+  const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
   if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
+    throw new Error("DATABASE_URL/POSTGRES_URL no está configurada.");
   }
   return databaseUrl;
 }
