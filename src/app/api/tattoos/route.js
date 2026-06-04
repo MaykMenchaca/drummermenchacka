@@ -8,6 +8,13 @@ export const runtime = "nodejs";
 
 const MAX_IMAGE_WIDTH = 1600;
 const JPEG_QUALITY = 80;
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+]);
 
 function parseBoolean(value) {
   return value === true || value === "true" || value === "on" || value === "1";
@@ -47,6 +54,20 @@ export async function POST(request) {
 
     if (!image || typeof image.arrayBuffer !== "function") {
       return NextResponse.json({ error: "La imagen es obligatoria." }, { status: 400 });
+    }
+
+    if (!ALLOWED_IMAGE_TYPES.has(image.type)) {
+      return NextResponse.json(
+        { error: "Formato no permitido. Usa JPG, PNG, WebP o AVIF." },
+        { status: 400 }
+      );
+    }
+
+    if (image.size > MAX_UPLOAD_BYTES) {
+      return NextResponse.json(
+        { error: "La imagen supera el limite de 8 MB." },
+        { status: 400 }
+      );
     }
 
     if (!title || !category) {

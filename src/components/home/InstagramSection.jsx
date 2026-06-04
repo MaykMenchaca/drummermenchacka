@@ -3,6 +3,7 @@
 // Seccion Instagram: tira de 6 posts + CTA.
 // Consume INSTAGRAM_* (solo lectura) del contrato compartido.
 
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import Reveal, { RevealItem } from "@/components/Reveal";
 import {
@@ -43,11 +44,12 @@ export default function InstagramSection() {
                 className={styles.link}
                 aria-label={`Ver ${INSTAGRAM_HANDLE} en Instagram`}
               >
-                <img
+                <Image
                   src={post.image}
                   alt=""
-                  loading="lazy"
                   className={styles.img}
+                  fill
+                  sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 16vw"
                 />
                 <span className={styles.overlay} aria-hidden="true">
                   <Icon name="instagram" size={28} />

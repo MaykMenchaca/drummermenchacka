@@ -374,11 +374,16 @@
   background: #0c0c0c;
 }
 
-.galleryItem img {
+.galleryImage {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 5;
-  object-fit: cover;
   display: block;
+  overflow: hidden;
+}
+
+.galleryImage img {
+  object-fit: cover;
 }
 
 .galleryItem figcaption {

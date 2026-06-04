@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   motion,
@@ -70,10 +71,13 @@ export default function HeroSection() {
         style={{ y: bgY }}
         aria-hidden="true"
       >
-        <img
+        <Image
           src="/tattoos/999_mejorada.jpeg"
           alt=""
           className={styles.mediaImg}
+          fill
+          priority
+          sizes="100vw"
         />
       </motion.div>
 

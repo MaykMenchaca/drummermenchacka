@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import Calendar, {
   DEFAULT_SLOTS,
@@ -618,7 +619,14 @@ export default function AdminPage() {
             <div className={styles.galleryGrid}>
               {tattoos.map((tattoo) => (
                 <figure key={tattoo.id} className={styles.galleryItem}>
-                  <img src={tattoo.image_url} alt={tattoo.title} loading="lazy" />
+                  <span className={styles.galleryImage}>
+                    <Image
+                      src={tattoo.image_url}
+                      alt={tattoo.title}
+                      fill
+                      sizes="(max-width: 640px) 50vw, 180px"
+                    />
+                  </span>
                   <figcaption>
                     <span>{tattoo.title}</span>
                     <small>{tattoo.category}</small>

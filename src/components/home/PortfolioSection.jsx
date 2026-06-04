@@ -5,6 +5,7 @@
 // Filtros por categoría, hover con caption deslizante, reveal escalonado.
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import Reveal, { RevealItem } from "@/components/Reveal";
 import { TATTOO_DATA, CATEGORIES } from "@/components/home/data";
@@ -92,11 +93,16 @@ export default function PortfolioSection({ tattoos }) {
                   aria-label={`Ver ${piece.title} en detalle`}
                 >
                   <span className={styles.media}>
-                    <img
+                    <Image
                       src={piece.image}
                       alt={piece.title}
                       className={styles.image}
-                      loading="lazy"
+                      fill
+                      sizes={
+                        piece.featured
+                          ? "(max-width: 920px) 100vw, 50vw"
+                          : "(max-width: 600px) 100vw, (max-width: 920px) 50vw, 25vw"
+                      }
                     />
                   </span>
                   <span className={styles.captionWrap} aria-hidden="true">

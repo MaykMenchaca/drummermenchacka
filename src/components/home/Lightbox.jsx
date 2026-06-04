@@ -6,6 +6,7 @@
 // Animación de entrada/salida con AnimatePresence (respeta reduced-motion).
 
 import { useCallback, useEffect, useRef } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Icon from "@/components/Icon";
 import styles from "./Lightbox.module.css";
@@ -157,13 +158,16 @@ export default function Lightbox({ items, index, onClose, onIndexChange }) {
             )}
 
             <motion.figure className={styles.figure} {...figureMotion}>
-              <img
-                key={current.id}
-                src={current.image}
-                alt={current.title}
-                className={styles.image}
-                loading="lazy"
-              />
+              <span className={styles.imageFrame}>
+                <Image
+                  key={current.id}
+                  src={current.image}
+                  alt={current.title}
+                  className={styles.image}
+                  fill
+                  sizes="min(100vw, 1100px)"
+                />
+              </span>
               <figcaption className={styles.caption}>
                 <h3 className={styles.captionTitle}>{current.title}</h3>
                 <p className={styles.captionMeta}>
