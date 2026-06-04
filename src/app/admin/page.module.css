@@ -25,7 +25,7 @@
     linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
     rgba(16, 16, 16, 0.78);
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(8px);
 }
 
 .authPanel {
@@ -416,7 +416,7 @@
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
   cursor: pointer;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(2px);
   transition: background 180ms ease-out;
 }
 

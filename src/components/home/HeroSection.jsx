@@ -50,13 +50,10 @@ export default function HeroSection() {
     offset: ["start start", "end start"],
   });
 
-  // Fondo más lento que el contenido. Si reduced-motion, sin desplazamiento.
+  // Fondo más lento (parallax de profundidad). Si reduced-motion, sin desplazamiento.
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "22%"]);
-  const contentY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ["0%", reduce ? "0%" : "-8%"]
-  );
+  // El contenido (el nombre) NO se traslada con el scroll: trasladarlo causaba que el
+  // texto "retumbara"/vibrara al hacer scroll en móvil. Solo un fade suave (opacity es barato).
   const contentOpacity = useTransform(
     scrollYProgress,
     [0, 0.7, 1],
@@ -87,7 +84,7 @@ export default function HeroSection() {
       {/* Contenido centrado con entrada escalonada. */}
       <motion.div
         className={styles.inner}
-        style={{ y: contentY, opacity: contentOpacity }}
+        style={{ opacity: contentOpacity }}
       >
         <motion.div
           className="container"

@@ -6,7 +6,11 @@
   position: relative;
   display: flex;
   align-items: center;
+  /* svh = "small viewport height": NO cambia cuando la barra del navegador
+     se muestra/oculta en móvil, así el contenido no brinca al hacer scroll.
+     Se deja vh como fallback para navegadores viejos. */
   min-height: 92vh;
+  min-height: 92svh;
   text-align: center;
   border-bottom: 1px solid var(--color-border);
   overflow: hidden;
@@ -57,7 +61,7 @@
   z-index: 2;
   width: 100%;
   padding: 120px 0;
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 .eyebrow {

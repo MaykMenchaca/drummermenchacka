@@ -128,6 +128,10 @@ export default function Citas() {
         year: "numeric",
       })
     : "Selecciona un dia";
+  const canSubmit = Boolean(selectedDate && selectedTime);
+  const submitHelp = canSubmit
+    ? "Deposito requerido tras confirmacion."
+    : "Elige un dia y horario disponible.";
 
   const reveal = reduceMotion
     ? {}
@@ -375,24 +379,37 @@ export default function Citas() {
                   <button
                     type="submit"
                     className={`btn btn-primary ${styles.confirmButton}`}
-                    disabled={isSubmitting || !selectedDate || !selectedTime}
+                    disabled={isSubmitting || !canSubmit}
                   >
                     {isSubmitting ? "Procesando..." : "Confirmar cita"}
                   </button>
-                  <p className={styles.helper}>Deposito requerido tras confirmacion.</p>
+                  <p className={canSubmit ? styles.helper : styles.actionHint}>
+                    {submitHelp}
+                  </p>
                 </motion.aside>
               </div>
 
               <div className={styles.mobileSummary}>
-                <div className={styles.estimate}>
-                  <div className={styles.estimateIcon}>
-                    <Icon name="clock" />
+                <div className={styles.mobileSummaryDetails}>
+                  <div>
+                    <p className="label-caps">Fecha</p>
+                    <strong>{selectedDateLabel}</strong>
                   </div>
                   <div>
-                    <p className="label-caps">Estimacion de sesion</p>
-                    <strong>4-6 horas</strong>
+                    <p className="label-caps">Hora</p>
+                    <strong>{selectedTime || "Pendiente"}</strong>
                   </div>
                 </div>
+                <button
+                  type="submit"
+                  className={`btn btn-primary ${styles.mobileConfirmButton}`}
+                  disabled={isSubmitting || !canSubmit}
+                >
+                  {isSubmitting ? "Procesando..." : "Confirmar cita"}
+                </button>
+                <p className={canSubmit ? styles.mobileHelper : styles.mobileActionHint}>
+                  {submitHelp}
+                </p>
               </div>
             </form>
           )}
