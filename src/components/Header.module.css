@@ -21,3 +21,14 @@
   backdrop-filter: blur(var(--glass-blur));
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
 }
+
+/* En móvil quitamos el blur de fondo del header (re-rasteriza cada frame al
+   hacer scroll = jank) y lo compensamos con un fondo casi opaco. Glass solo en desktop. */
+@media (max-width: 768px) {
+  .headerEnhance,
+  .scrolled {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(13, 13, 13, 0.97);
+  }
+}
